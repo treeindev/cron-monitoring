@@ -1,12 +1,12 @@
 import psycopg2
+import os
 
 class Database:
     def __init__(self):
-        # TODO: Externalise database credentials outside from logic
-        self.host="localhost"
-        self.name="cron_monitoring"
-        self.user=""
-        self.password=""
+        self.host=os.getenv("CRON_DATABASE_HOST")
+        self.name=os.getenv("CRON_DATABASE_NAME")
+        self.user=os.getenv("CRON_DATABASE_USER")
+        self.password=os.getenv("CRON_DATABASE_PASSWORD")
         self.connection=None
         self.cursor=None
     
