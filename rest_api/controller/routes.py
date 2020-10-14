@@ -1,8 +1,11 @@
 from flask import Blueprint, jsonify, request
+import rest_api.constants
 from rest_api.services.job import JobService
+from rest_api.services.request_validator import RequestValidator
 
 api = Blueprint('api', __name__)
 job_service = JobService()
+validator = RequestValidator()
 
 @api.route('/jobs', methods=['GET'])
 def get_jobs():
@@ -11,9 +14,10 @@ def get_jobs():
 
 @api.route('/job', methods=['POST'])
 def new_job():
-    # TODO: Implement a parser to ensure post data is received in the right format.
-    data = request.get_json()
-    job = job_service.create_new_job(data['data'], data['active'])
+    params = validator.validate_params(request.get_json(), ('data', 'active'))
+    if not params:
+        return invalid_route('', rest_api.constants.MESSAGE_INVALID_PARAMS)
+    job = job_service.create_new_job(*params)
     return jsonify(job.json())
 
 @api.route('/job/<job_id>', methods=['GET'])
@@ -23,9 +27,10 @@ def get_job(job_id):
 
 @api.route('/job/<job_id>', methods=['PUT'])
 def update_job(job_id):
-    # TODO: Implement a parser to ensure put data is received in the right format.
-    data = request.get_json()
-    job = job_service.update_job(job_id, data['data'], data['active'])
+    params = validator.validate_params(request.get_json(), ('data', 'active'))
+    if not params:
+        return invalid_route('', rest_api.constants.MESSAGE_INVALID_PARAMS)
+    job = job_service.update_job(job_id, *params)
     return jsonify(job.json())
 
 @api.route('/job/<job_id>', methods=['DELETE'])
@@ -34,5 +39,5 @@ def delete_job(job_id):
     return jsonify({"message": "Job has been removed"})
 
 @api.route('/<path>', methods=['GET','POST','PUT','DELETE','OPTIONS'])
-def invalid_route(path):
-    return jsonify({"error": "Invalid request"})
+def invalid_route(path, message=rest_api.constants.MESSAGE_INVALID_ENDPOINT, code=400):
+    return jsonify({"error": message}), code
