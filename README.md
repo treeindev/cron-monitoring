@@ -4,6 +4,8 @@ Cron Monitoring is a tool to manage Cron Jobs running on a local machine. It all
 
 Cron Jobs allow you to run scheduled scripts at a given date and time. They are very helpful to execture routines periodically. Backups, data cleanup, send daily reports, check server availability or health checks are examples of Cron Jobs usecases.
 
+<b>Important: this tool is still in development, no stable version has been released.</b>
+
 ## Cron Jobs Syntax
 
 This tool manages the creation of Cron Job behind scenes. However, here is the details of how these jobs look like. A typical Cron Job has the following syntax:
