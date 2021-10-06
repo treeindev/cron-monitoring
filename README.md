@@ -1,6 +1,6 @@
 # Cron Monitoring
 
-Cron Monitoring is a tool to manage Cron Jobs running on a local machine. It allows to keep track of active jobs, add new jobs or remove existing ones.
+Cron Monitoring is a tool to manage Cron Jobs running on a Unix machine. It allows to keep track of active jobs, add new jobs or remove existing ones.
 
 Cron Jobs allow you to run scheduled scripts at a given date and time. They are very helpful to execture routines periodically. Backups, data cleanup, send daily reports, check server availability or health checks are examples of Cron Jobs usecases.
 

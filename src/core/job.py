@@ -12,6 +12,7 @@ class Job:
         self.output = output
         self.error = error
         self.__generate_id()
+
     
     # Each job has a unique ID that allows it to identify from the rest.
     # All its properties are used to generate an encoded ID.
