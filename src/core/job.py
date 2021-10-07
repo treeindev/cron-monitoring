@@ -11,13 +11,13 @@ class Job:
         self.execution = execution
         self.output = output
         self.error = error
+        self.id = ""
         self.__generate_id()
 
     
     # Each job has a unique ID that allows it to identify from the rest.
     # All its properties are used to generate an encoded ID.
     def __generate_id(self) -> str:
-        self.id: base64.b64encode(
-            b''+self.minutes+self.hours+self.days+self.month+self.week_day+self.location+self.execution+self.output+self.error
-        )
+        properties = self.minutes+self.hours+self.days+self.month+self.week_day+self.location+self.execution+self.output+self.error
+        self.id = base64.b64encode(properties.encode('ascii')).decode('ascii')
     

@@ -12,11 +12,13 @@ class JobManager:
 
     # Returns list of running jobs on the system
     def get_jobs(self) -> list:
-        output = subprocess.run([self.crontab_base, self.crontab_list], stdout=subprocess.PIPE)
-        crons = output.stdout.decode('utf-8').splitlines();
+        output = subprocess.run(
+            [self.crontab_base, self.crontab_list],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL
+        )
+        crons = output.stdout.decode('utf-8').splitlines()
         jobs = []
-
-        # TODO: Check for "no crontab for" values if no jobs are running on the system.
 
         for cron in crons:
             details = cron.split(" ", maxsplit=5)
@@ -50,17 +52,53 @@ class JobManager:
         return jobs
 
     # Add a crontab job to the system.
-    # The creation of new crontab jobs is done via temporary file.
-    # All current jobs + new added one are written on a temporary TXT file.
-    # Then, crontab commmand gets executed based on the temporary file.
-    # After crontab gets update, temporary file is manually removed.
-    # To manage temp files, "NamedTemporaryFile" is used from the tempfile module. See: https://docs.python.org/3/library/tempfile.html
-    def add_job(self, minutes, hours, days, month, week_day, location, execution, output, error) -> Job:
+    def add_job(self, minutes, hours, days, month, week_day, location, execution, output, error) -> None:
         new_job = Job(minutes, hours, days, month, week_day, location, execution, output, error)
         jobs = self.get_jobs()
-        jobs.append(new_job)
+        
+        # Prevent duplicated jobs to be included
+        already_exists = False
+        for existing_job in jobs:
+            if existing_job.id == new_job.id:
+                already_exists = True
 
-        # TODO: Prevent adding a duplicated job
+        if already_exists:
+            return
+
+        jobs.append(new_job)
+        self.__persist_jobs_to_system(jobs)
+    
+    def remove_job(self, job_id) -> None:
+        existing_jobs = self.get_jobs()
+        filtered_jobs = list(filter(lambda job: job.id != job_id, existing_jobs))
+        self.__persist_jobs_to_system(filtered_jobs)
+
+    # Removes all crontab jobs from the system.
+    # CAUTION: There is no rollback once the command gets executed.
+    def __remove_all(self) -> None:
+        subprocess.run(
+            [self.crontab_base, self.crontab_remove],
+            stderr=subprocess.DEVNULL
+        )
+
+    # Creates a crontab string based on a given job
+    def __create_crontab(self, job) -> str:
+        # Date and time section.
+        crontab = f"{job.minutes} {job.hours} {job.days} {job.month} {job.week_day} "
+        # Script execution section.
+        crontab += f"cd {job.location} && {job.execution} "
+        # Output logs section.
+        crontab += f">> {job.output} {job.error}"
+        return crontab
+    
+    # Rewrites all crontab jobs from the system.
+    def __persist_jobs_to_system(self, jobs) -> None:
+        #The creation of new crontab jobs is done via temporary file.
+        # All current jobs + new added one are written on a temporary TXT file.
+        # Then, crontab commmand gets executed based on the temporary file.
+        # After crontab gets update, temporary file is manually removed.
+        # To manage temp files, "NamedTemporaryFile" is used from the tempfile module.
+        # See: https://docs.python.org/3/library/tempfile.html
 
         # Generate a temporary named file.
         tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.txt')
@@ -72,22 +110,10 @@ class JobManager:
         
         # Remove all jobs + re-add new ones.
         self.__remove_all()
-        subprocess.run([self.crontab_base, tmp_file.name])
+        subprocess.run(
+            [self.crontab_base, tmp_file.name],
+            stderr=subprocess.DEVNULL
+        )
 
         # Clean up temporary file.
         os.unlink(tmp_file.name)
-    
-    # Removes all crontab jobs from the system.
-    # CAUTION: There is no rollback once the command gets executed.
-    def __remove_all(self) -> None:
-        subprocess.run([self.crontab_base, self.crontab_remove])
-
-    # Creates a crontab string based on a given job
-    def __create_crontab(self, job) -> str:
-        # Date and time section.
-        crontab = f"{job.minutes} {job.hours} {job.days} {job.month} {job.week_day} "
-        # Script execution section.
-        crontab += f"cd {job.location} && {job.execution} "
-        # Output logs section.
-        crontab += f">> {job.output} {job.error}"
-        return crontab
