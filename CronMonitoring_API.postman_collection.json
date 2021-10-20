@@ -1,0 +1,83 @@
+{
+	"info": {
+		"_postman_id": "6834601d-fa9b-4979-8011-604cbb54222d",
+		"name": "Cron Monitoring",
+		"description": "An API for managaging and scheduling time-based cronjobs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Jobs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/jobs",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"jobs"
+					]
+				},
+				"description": "Displays list of existing cronjobs"
+			},
+			"response": []
+		},
+		{
+			"name": "Job new",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"minutes\": \"*/11\",\n    \"hours\": \"*\",\n    \"days\": \"*\",\n    \"month\": \"*\",\n    \"week_day\": \"*\",\n    \"location\": \"test_jobs/job1\",\n    \"execution\": \"python3 index.py\",\n    \"output\": \"cron_logs/cron.log\",\n    \"error\": \"2>&1\"\n}"
+				},
+				"url": {
+					"raw": "{{host}}/job",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"job"
+					]
+				},
+				"description": "Creates a single cronjob"
+			},
+			"response": []
+		},
+		{
+			"name": "Job delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\":\"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/job",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"job"
+					]
+				},
+				"description": "Deletes a single cronjob"
+			},
+			"response": []
+		}
+	]
+}

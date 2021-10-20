@@ -53,6 +53,13 @@ class JobManager:
 
     # Add a crontab job to the system.
     def add_job(self, minutes, hours, days, month, week_day, location, execution, output, error) -> None:
+        if (
+            minutes is None or hours is None or days is None or 
+            month is None or week_day is None or location is None or 
+            execution is None or output is None
+        ):
+            raise Exception("Missing or invalid parameters.")
+        
         new_job = Job(minutes, hours, days, month, week_day, location, execution, output, error)
         jobs = self.get_jobs()
         
@@ -69,6 +76,9 @@ class JobManager:
         self.__persist_jobs_to_system(jobs)
     
     def remove_job(self, job_id) -> None:
+        if job_id is None:
+            raise Exception("Missing or invalid job ID.")
+
         existing_jobs = self.get_jobs()
         filtered_jobs = list(filter(lambda job: job.id != job_id, existing_jobs))
         self.__persist_jobs_to_system(filtered_jobs)

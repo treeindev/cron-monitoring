@@ -1,3 +1,6 @@
+# This is a test job 
+# It logs the exchange value for the listed cryptocurrencies to a log file
+
 import requests
 import json
 import datetime
