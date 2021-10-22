@@ -1,8 +1,8 @@
 # Cron Monitoring
 
-Cron Monitoring is a tool to manage Cron Jobs running on a Unix machine. It allows for remote acces to active cron jobs, add new jobs or remove existing ones.
+Cron Monitoring is a tool to manage Cron Jobs running on a Unix machine. It allows for remote access to active cron jobs, add new jobs or remove existing ones.
 
-[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
+[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/treeindev/cron-monitoring/blob/master/LICENSE)
 
 1. Installation
 2. API Reference
@@ -10,8 +10,6 @@ Cron Monitoring is a tool to manage Cron Jobs running on a Unix machine. It allo
 4. Creating new jobs.
 5. Cron jobs syntax.
 6. Acknowledgements
-
-<br>
 
 ## Installation
 
@@ -26,8 +24,9 @@ This tool is built on top of `Python 3`. You can check [Python Virtual Environme
 
 The tool assumes you are running it on a serve with a web server like Apache, Nginx or similar. After running the `api.py` script, CronMonitoring API will listen to localhost on port `5000`. You need to map that port listener to your own web server configuration. 
 
+To run unit test, run the following command: `pytest`.
+
 <b>Important note: </b> There is no user authentication on this version. 
-<br><br>
 
 ## API Reference 🚀
 
@@ -62,11 +61,9 @@ The tool assumes you are running it on a serve with a web server like Apache, Ng
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `id`      | `string` | **Required**. The internal job ID. |
-<br>
 
 ## What are cron jobs?
 A cron job allow you to run scheduled scripts at a given date and time. They are very helpful to execture routines periodically. Backups, data cleanup, send daily reports, check server availability or health checks are examples of Cron Jobs usecases.
-<br><br>
 
 ## Creating new cron jobs
 To create new cron jobs you need to provide the following details:
@@ -76,7 +73,7 @@ To create new cron jobs you need to provide the following details:
 * * * * * cd {{script_location}} && {{script_execution}} >> {{log_output}}
 ```
 Note: `*` are replaced by provided datetime values.
-<br><br>
+
 
 ## Cron jobs syntax
 
@@ -116,7 +113,6 @@ By default the output of a command or a script (if any produced), will be email 
 ```bash
 * * * * * /root/script.sh >/dev/null 2>&1
 ```
-<br>
 
 ### Cron Jobs Examples
 Run a job everyday at 3am:
@@ -133,7 +129,6 @@ Run a python script first day of every month:
 ```bash
 0 0 1 * * /root/job.sh
 ```
-<br>
 
 ### Acknowledgements
 [More info about Crontab](https://man7.org/linux/man-pages/man1/crontab.1.html)
